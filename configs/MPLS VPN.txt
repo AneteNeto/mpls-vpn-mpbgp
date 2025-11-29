@@ -1,0 +1,255 @@
+https://www.brindereseau.fr/?article=mpls-vpn
+https://www.brindereseau.fr/?article=mpls-vpn-2
+MPLS VPN
+
+Étape 1 : un backbone IP
+
+PE1
+int loopback 0
+ip add 10.0.0.1 255.255.255.255
+no shut
+
+int f0/0
+ip address 10.0.1.1 255.255.255.252
+mpls ip
+no shut
+
+router ospf 10
+net 10.0.1.0 0.0.0.3 area 0
+net 10.0.0.0 0.0.0.255 area 0
+===================
+
+PE2
+int loopback 0
+ip add 10.0.0.2 255.255.255.255
+no shut
+
+int f0/0
+ip address 10.0.1.17 255.255.255.252
+mpls ip
+no shut
+
+router ospf 10
+net 10.0.1.16 0.0.0.3 area 0
+net 10.0.0.0 0.0.0.255 area 0
+===================
+P1
+int loopback 0
+ip add 10.0.0.3 255.255.255.255
+
+int f0/0
+ip address 10.0.1.2 255.255.255.252
+mpls ip
+no shut
+int f0/1
+ip address 10.0.1.5 255.255.255.252
+mpls ip
+no shut
+int f1/0
+ip address 10.0.1.9 255.255.255.252
+mpls ip
+no shut
+
+router ospf 10
+net 10.0.1.0 0.0.0.3 area 0
+net 10.0.1.4 0.0.0.3 area 0
+net 10.0.1.8 0.0.0.3 area 0
+net 10.0.0.0 0.0.0.255 area 0
+============
+
+P2
+int loopback 0
+ip add 10.0.0.4 255.255.255.255
+
+
+int f0/0
+ip address 10.0.1.18 255.255.255.252
+mpls ip
+no shut
+int f0/1
+ip address 10.0.1.6 255.255.255.252
+mpls ip
+no shut
+int f2/0
+ip address 10.0.1.13 255.255.255.252
+mpls ip
+no shut
+
+router ospf 10
+net 10.0.1.16 0.0.0.3 area 0
+net 10.0.1.4 0.0.0.3 area 0
+net 10.0.1.12 0.0.0.3 area 0
+net 10.0.0.0 0.0.0.255 area 0
+============
+
+
+P3
+int loopback 0
+ip add 10.0.0.5 255.255.255.255
+
+int f1/0
+ip address 10.0.1.10 255.255.255.252
+mpls ip
+no shut
+int f2/0
+ip address 10.0.1.14 255.255.255.252
+mpls ip
+no shut
+router ospf 10
+net 10.0.1.8 0.0.0.3 area 0
+net 10.0.1.12 0.0.0.3 area 0
+net 10.0.0.0 0.0.0.255 area 0
+============
+============
+P1
+int f0/0
+mpls ip	
+no shut
+int f0/1
+mpls ip	
+no shut
+int f1/0
+mpls ip	
+no shut
+================
+show mpls ldp neighbor | include Peer LDP
+show mpls forwarding-table
+=============================================
+Étape 2 : configuration d'un MPLS L3VPN VRF
+===============================================
+PE1
+
+ip vrf bleu
+rd 10:11
+route-target export 10:11
+route-target import 10:11
+
+ip vrf rouge
+rd 10:21
+route-target export 10:21
+route-target import 10:21
+
+int f0/1
+ip vrf forwarding bleu
+ip add 10.0.11.1 255.255.255.0
+no shut
+int f1/0
+ip vrf forwarding rouge
+ip add 10.0.21.1 255.255.255.0
+no shut
+=================
+PE2-
+
+ip vrf bleu
+rd 10:11
+route-target export 10:11
+route-target import 10:11
+
+ip vrf rouge
+rd 10:21
+route-target export 10:21
+route-target import 10:21
+
+int f0/1
+ip vrf forwarding bleu
+ip add 10.0.12.1 255.255.255.0
+no shut
+int f1/0
+ip vrf forwarding rouge
+ip add 10.0.22.1 255.255.255.0
+no shut
+int f2/0
+ip add 10.1.22.1 255.255.255.0
+ip vrf forwarding rouge
+no shut
+
+=====================================================
+Étape 3: BGP ET MP-BGP
+==============================================
+BGP CONFIG
+CE1 CONFIG
+int f0/0
+ip add 10.0.11.2 255.255.255.0
+no shut
+
+router bgp 65011
+redistribute connected 
+neighbor 10.0.11.1 remote-as 65000
+
+CE2 CONFIG
+int f0/0
+ip add 10.0.21.2 255.255.255.0
+no shut
+router bgp 65021
+redistribute connected 
+neighbor 10.0.21.1 remote-as 65000
+
+CE3 CONFIG
+int F0/0
+ip add 10.0.12.2 255.255.255.0
+no shut
+router bgp 65012
+redistribute connected 
+neighbor 10.0.12.1 remote-as 65000
+
+CE4 CONFIG
+int f0/0
+ip add 10.0.22.2 255.255.255.0
+no shut
+router bgp 65022
+redistribute connected 
+neighbor 10.0.22.1 remote-as 65000
+
+CE5 CONFIG
+
+int f0/0
+ip add 10.1.22.2 255.255.255.0
+no shut
+router bgp 65022
+redistribute connected 
+neighbor 10.1.22.1 remote-as 65000
+
+MP-BGP CONFIG
+
+PE1
+================
+router bgp 65000
+ ! The neighbor (same AS)
+neighbor 10.0.0.2 remote-as 65000
+neighbor 10.0.0.2 update-source loopback 0
+
+ ! Enable VPN-IPv4 capability
+  address-family vpnv4
+  neighbor 1.0.0.2 activate
+  neighbor 1.0.0.2 send-community both
+  
+ address-family ipv4 vrf bleu
+neighbor 10.0.11.2 remote-as 65011
+neighbor 10.0.11.2 activate
+
+address-family ipv4 vrf rouge
+neighbor 10.0.21.2 remote-as 65021
+neighbor 10.0.21.2 activate
+
+PE2
+=======================
+router bgp 65000
+ ! The neighbor (same AS)
+neighbor 10.0.0.1 remote-as 65000
+neighbor 10.0.0.1 update-source loopback 0
+
+ ! Enable VPN-IPv4 capability
+  address-family vpnv4
+  neighbor 1.0.0.1 activate
+  neighbor 1.0.0.1 send-community both
+  
+ address-family ipv4 vrf bleu
+neighbor 10.0.12.2 remote-as 65012
+neighbor 10.0.12.2 activate
+
+address-family ipv4 vrf rouge
+neighbor 10.0.22.2 remote-as 65022
+neighbor 10.0.22.2 activate
+address-family ipv4 vrf rouge
+neighbor 10.1.22.2 remote-as 65022
+neighbor 10.1.22.2 activate
