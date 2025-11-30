@@ -1,12 +1,11 @@
-# 🏷️ TP – MPLS-VPN & MP-BGP  
-### 🛜 Provider Backbone & Multi-Client Isolation Lab
+# 🖧 LAB – MPLS-VPN & MP-BGP  
+### Provider Backbone & Multi-Client Isolation Lab
 
 <p align="center">
-  <img src="./topology/mpls_vpn_mpbgp_topology.png" width="100%" alt="MPLS-VPN Topology"/>
+  <img src="./topology/mpls_vpn_mpbgp.png" width="100%" alt="MPLS-VPN Topology"/>
 </p>
 
 ---
-
 ## 🎯 Overview
 
 This lab focuses on deploying a **full service-provider MPLS backbone**, including:
@@ -70,11 +69,8 @@ Two customers (**BLUE** and **RED**) are deployed across multiple locations and 
 
 ---
 
----
-
 ## 🔗 Useful Links
-
-- 📘 **TP PDF** : `TP-mpls-vpn.pdf`  
+- 📘 **TP PDF** : `/dosc/TP-mpls-vpn.pdf`  
 - 🧪 **Configurations** : folder `/configs`  
 - 🖥️ **Topology** : folder `/topology`  
 
