@@ -1,96 +1,80 @@
-🏷️ TP – MPLS-VPN & MP-BGP
-🛜 Provider Backbone & Multi-Client Isolation Lab
-<p align="center"> <img src="./topology/mpls_vpn_mpbgp_topology.png" width="100%" alt="MPLS-VPN Topology"/> </p>
+# 🏷️ TP – MPLS-VPN & MP-BGP  
+### 🛜 Provider Backbone & Multi-Client Isolation Lab
 
-🎯 Overview
+<p align="center">
+  <img src="./topology/mpls_vpn_mpbgp_topology.png" width="100%" alt="MPLS-VPN Topology"/>
+</p>
 
-This lab focuses on deploying a full service-provider MPLS backbone, including:
+---
 
-OSPF as IGP
+## 🎯 Overview
 
-MPLS + LDP for transport
+This lab focuses on deploying a **full service-provider MPLS backbone**, including:
 
-VRF for customer isolation
+- **OSPF** as IGP  
+- **MPLS + LDP** for transport  
+- **VRF** for customer isolation  
+- **MP-BGP** for VPNv4 route exchange  
+- **MPLS-TE tunnels** for path control  
 
-MP-BGP for VPNv4 route exchange
+Two customers (**BLUE** and **RED**) are deployed across multiple locations and connected through the provider network **AS 65000**, while remaining strictly isolated.
 
-MPLS-TE tunnels for path control
+---
 
-Two customers (BLUE and RED) are deployed across multiple locations and connected through the provider network AS 65000, while remaining strictly isolated.
+## 🎯 Objectives
 
-🎯 Objectives
+- Build private networks for two enterprise customers  
+- Isolate customers using **VRFs**  
+- Deploy an MPLS backbone with **OSPF + LDP + MP-BGP**  
+- Transport inter-site routes using **VPNv4**  
+- Experiment with **explicit TE tunnels** for path steering  
 
-Build private networks for two enterprise customers
+---
 
-Isolate customers using VRFs
+## 🏗️ Architecture & Technologies
 
-Deploy an MPLS backbone with OSPF + LDP + MP-BGP
+### Provider Backbone — AS 65000
+- OSPF backbone  
+- MPLS + LDP  
+- MP-BGP for VPNv4  
+- MPLS-TE tunnels (via R3 / via R5)
 
-Transport inter-site routes using VPNv4
+### Customers
+- **BLUE customer : AS 65011**  
+- **RED customer : AS 65021 / AS 65022**  
+- VRFs `bleu` and `rouge`  
+- Separate routing tables per customer  
 
-Experiment with explicit TE tunnels for path steering
+---
 
-🏗️ Architecture & Technologies
-Provider Backbone — AS 65000
+## 🛠️ Tasks Completed
 
-OSPF backbone
+- Enabled **OSPF + MPLS** across backbone routers  
+- Created and configured **VRFs**  
+- Configured **MP-BGP** for VPNv4 routing  
+- Validated BLUE/RED isolation  
+- Built **explicit MPLS-TE tunnels**  
+- Analyzed MPLS forwarding and label operations  
+- Captured traffic in Wireshark for MPLS packet analysis  
 
-MPLS + LDP
+---
 
-MP-BGP for VPNv4
+## 🧠 Skills Gained
 
-MPLS-TE tunnels (via R3 / via R5)
+- Practical understanding of **MPLS service-provider networks**  
+- Confident use of **VRFs** for customer isolation  
+- **VPNv4** routing with MP-BGP  
+- **MPLS label analysis** (stacking, encapsulation)  
+- Traffic-engineering with explicit tunnels  
+- Advanced troubleshooting: **OSPF, LDP, MP-BGP, VRF** routing  
 
-Customers
+---
 
-BLUE customer : AS 65011
+---
 
-RED customer : AS 65021 / AS 65022
+## 🔗 Useful Links
 
-VRFs bleu and rouge
+- 📘 **TP PDF** : `TP-mpls-vpn.pdf`  
+- 🧪 **Configurations** : folder `/configs`  
+- 🖥️ **Topology** : folder `/topology`  
 
-Separate routing tables per customer
-
-🛠️ Tasks Completed
-
-Enabled OSPF + MPLS across backbone routers
-
-Created and configured VRFs
-
-Configured MP-BGP for VPNv4 routing
-
-Validated BLUE/RED isolation
-
-Built explicit MPLS-TE tunnels
-
-Analyzed MPLS forwarding and label operations
-
-Captured traffic in Wireshark for MPLS packet analysis
-
-🧠 Skills Gained
-
-Practical understanding of MPLS service-provider networks
-
-Confident use of VRFs for customer isolation
-
-VPNv4 routing with MP-BGP
-
-MPLS label analysis (stacking, encapsulation)
-
-Traffic-engineering using explicit tunnels
-
-Advanced troubleshooting: OSPF, LDP, MP-BGP, VRF routing
-
-📁 Repository Structure
-topology/          → PNG topology files  
-configs/           → Router configuration files  
-TP-mpls-vpn.pdf    → Lab statement  
-README.md          → Project presentation  
-
-🔗 Useful Links
-
-📘 TP PDF : TP-mpls-vpn.pdf
-
-🧪 Configurations : dossier /configs
-
-🖥️ Topology : dossier /topology
